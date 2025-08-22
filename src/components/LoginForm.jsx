@@ -4,7 +4,12 @@ import { Link } from 'react-router-dom';
 
 export default function LoginForm({handleSubmit}) {
 
-    const { email, password, onInputValue } = useForm({ email: '', password: '' })
+    const { email, password, onInputValue } = useForm({ email: '', password: '' });
+
+    const onSubmit = (e) => {
+        e.preventDefault();
+        handleSubmit(email, password);
+    }
 
     return (
         <div className="bg-gray-100 min-h-screen flex items-center justify-center">
@@ -12,7 +17,7 @@ export default function LoginForm({handleSubmit}) {
                 <h2 className="text-3xl font-bold text-center text-purple-600 mb-6">Iniciar Sesión</h2>
 
 
-                <form onSubmit={ (e)=> handleSubmit(e, email, password)} >
+                <form onSubmit={ e => onSubmit(e)} >
                     <div className="mb-4">
                         <label htmlFor="email" className="block text-sm font-medium text-gray-700">Correo electrónico</label>
                         <input
@@ -22,7 +27,7 @@ export default function LoginForm({handleSubmit}) {
                             className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
                             placeholder="Ingresa tu correo electrónico"
                             value={email}
-                            onChange={e => onInputValue(e.target)}
+                            onChange={ onInputValue }
                         />
                     </div>
 
@@ -35,7 +40,7 @@ export default function LoginForm({handleSubmit}) {
                             className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
                             placeholder="Ingresa tu contraseña"
                             value={password}
-                            onChange={e=>onInputValue(e.target)}
+                            onChange={ onInputValue }
                         />
                     </div>
 

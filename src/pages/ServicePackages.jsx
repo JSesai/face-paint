@@ -8,7 +8,7 @@ export default function ServicePackages() {
     const locations = ['CDMX', 'EDOMEX', 'OTRO']
 
     useEffect(() => {
-       
+
         selectUbication()
 
     }, [])
@@ -70,21 +70,8 @@ export default function ServicePackages() {
     return (
         <section className="bg-gray-100 py-10">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-8 rounded">
-                    <p className="text-sm">
-                        <strong>Nota:</strong> Tu reservación se confirma con un pago inicial de{" "}
-                        <span className="font-semibold">100 pesos</span>.{" "}
-                        <button
-                            onClick={handleShowAccountInfo}
-                            className="text-purple-600 font-medium underline"
-                        >
-                            Mostrar número de cuenta
-                        </button>
-                    </p>
-                </div>
-
                 <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
-                    Paquetes Promocionales de Pintacaritas
+                    Paquetes de Pintacaritas
                 </h1>
 
 
@@ -99,7 +86,7 @@ export default function ServicePackages() {
                                     src={pkg.image}
                                     alt={pkg.title}
                                     className="w-full h-48 object-cover transition-transform duration-300 ease-in-out transform hover:scale-110"
-                                    />
+                                />
                                 <div className="p-6">
                                     <h2 className="text-xl font-semibold text-gray-800 mb-2">
                                         {pkg.title}
@@ -107,9 +94,10 @@ export default function ServicePackages() {
                                     <p className="text-gray-600 text-sm mb-4">{pkg.description}</p>
                                     <p className="text-lg font-bold text-gray-900">${pkg.price}MXN</p>
                                     <button onClick={() => handlePackageSelected(pkg)}
-                                        className="mt-4 w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded">
-                                        Reservar
+                                        className="mt-4 w-full bg-purple-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded">
+                                        Detalles
                                     </button>
+                                  
                                 </div>
                             </div>
                         ))}

@@ -2,7 +2,7 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 
 const MySwal = withReactContent(Swal)
-export default function AlertMessage({
+export default function showAlert({
   typeAlert,
   message,
   title,
@@ -50,7 +50,7 @@ export default function AlertMessage({
         confirmButtonColor: "#3085d6",
         confirmButtonText: btnAccept,
       }).then((result) => {
-        console.log(result);
+        // console.log(result);
         if (result.isConfirmed && callbackAcept) callbackAcept();
       });
       break;
@@ -85,7 +85,7 @@ export default function AlertMessage({
         confirmButtonText: btnAccept,
         cancelButtonText: btnCancel,
       }).then((result) => {
-        console.log(result);
+       
         if (result.isConfirmed && callbackAcept) callbackAcept();
         if (!result.isConfirmed && callbackCancel) callbackCancel();
       });

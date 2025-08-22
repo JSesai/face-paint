@@ -1,3 +1,6 @@
+
+
+//formatea a moneda mx
 export function formatToCurrency(amount, currency = 'MXN', locale = 'es-MX') {
     return new Intl.NumberFormat(locale, {
         style: 'currency',

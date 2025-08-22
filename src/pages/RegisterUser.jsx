@@ -1,82 +1,43 @@
-import { useState } from "react"
 import { Link } from "react-router-dom";
-import clienteAxios from "../config/clienteAxios";
-import useAuth from "../hooks/useAuth"
+import useAuth from "../hooks/useAuth";
+import useForm from "../hooks/useForm";
+import { currentDate } from "../helpers/dates";
+import { ValidationRequestError, ValidationInputError } from "../utils/handlerErrors";
+import { validateInformation } from '../helpers/validation';
+import { handlerTypeError } from "../utils/validateTypeError";
 
 
 
-export default function RegisterUser() {
+export default function RegisterUser({ typeUser = 'collaboratorArtist' }) {
 
-  const [nombre, setNombre] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [repetirPassword, setRepetirPassword] = useState('');
-
-  const { showAlert, navigate } = useAuth()
+  const { showAlert, navigate, clienteAxios } = useAuth();
+  const { nombre, email, telefono, password, repetirPassword, onInputValue, resetForm } = useForm({ nombre: '', email: '', telefono: '', password: '', repetirPassword: '' })
 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    //metemos en un array los estates para poder usar el metodo includes y evaluar que ninguno incluya valor vacio
-    if ([nombre, email, password, repetirPassword].includes('')) {
-
-      showAlert({
-        title: 'Faltan datos 😥',
-        typeAlert: 'error',
-        message: 'Todos los campos son obligatorios',
-      });
-      return
-    }
-    //comprueba si password y repetir password no son iguales 
-    if (password !== repetirPassword) {
-      showAlert({
-        title: 'Revisa  tus passwords 😥',
-        typeAlert: 'error',
-        message: 'Los passwords ingresados no son iguales',
-      });
-      return
-    }
-
-    //comprueba si la password es menor a 6 caracteres
-    if (password.length < 6) {
-      showAlert({
-        title: 'El password es muy corto 😥',
-        typeAlert: 'error',
-        message: 'Debe ser  mayor a 6 caracteres',
-      });
-      return
-    }
-
-    //enviamos la peticion al backend con ayuda de axios
     try {
-      showAlert({
-        typeAlert: 'loading'
-      })
-      //hacemos uso de la baseurl que esta en cliente axios
-      const { data } = await clienteAxios.post('/users', { nombre, email, password }); //peticion post pasa primer parametro la url, segundo parametro lo que envia en este caso enviamos un objeto con los datos necesarios para hacer un nuevo registro
+      //validacion de datos ingresados
+      validateInformation({ "Nombre": nombre, "Correo": email, "Telefono": telefono, "Contraseña": password, "Repetir contraseña": repetirPassword }); //valida campos vacios
+      if (password.length < 6) throw new ValidationInputError('La contraseña es muy corta. Debe ser  mayor a 6 caracteres');
+      if (password !== repetirPassword) throw new ValidationInputError('Los contraseñas ingresadas no son iguales.');
 
-      //seteamos los inputs a campos vacios
-      setNombre('');
-      setEmail('');
-      setPassword('');
-      setRepetirPassword('');
-
-      //seteamos la alerta para mostrar el mensaje retornado del back
-      console.log(data);
+      showAlert({ typeAlert: 'loading' });
+      const sendInformation = { nombre, email, telefono, password, typeUser, dateRegister: currentDate() }
+      
+      const { data } = await clienteAxios.post('/users', sendInformation);
+      const { statusCode, message, response } = data;
+      if (statusCode !== 200) throw new ValidationRequestError(message);
+      resetForm();//reseteamos el formulario
       showAlert({
         typeAlert: 'success',
-        message: data.message,
-        callbackAcept: () => navigate('/')
-      })
+        message: response.message, //mensaje retornado del back
+        callbackAcept: () => navigate('/login')
+      });
 
     } catch (error) {
-      console.log(error);
-      let message = error.response.data.message || 'Ocurrio un error intentalo más tarde si el problema persiste contacte a soporte técnico.'
-      //en caso de ocurrir un error lo cachamos con axios con ayuda de error.response
-      showAlert({
-        typeAlert: 'error',
-        message,
-      })
+      console.log('here is the error', error.name);      
+      handlerTypeError(error);
     }
   }
 
@@ -98,7 +59,7 @@ export default function RegisterUser() {
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
               placeholder="Ingresa tu correo electrónico"
               value={nombre}
-              onChange={(e) => setNombre(e.target.value)}
+              onChange={onInputValue}
             />
           </div>
           <div className="mb-4">
@@ -110,7 +71,19 @@ export default function RegisterUser() {
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
               placeholder="Ingresa tu correo electrónico"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={onInputValue}
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="telefono" className="block text-sm font-medium text-gray-700">Numero Telefónico</label>
+            <input
+              type="tel"
+              id="telefono"
+              name="telefono"
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              placeholder="Ingresa tu Numero Telefónico"
+              value={telefono}
+              onChange={onInputValue}
             />
           </div>
 
@@ -123,19 +96,19 @@ export default function RegisterUser() {
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
               placeholder="Ingresa tu contraseña"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={onInputValue}
             />
           </div>
           <div className="mb-6">
             <label htmlFor="repetir-password" className="block text-sm font-medium text-gray-700">RepetirContraseña</label>
             <input
               type="password"
-              id="repetir-password"
-              name="repetir-password"
+              id="repetirPassword"
+              name="repetirPassword"
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
               placeholder="Repite tu contraseña"
               value={repetirPassword}
-              onChange={(e) => setRepetirPassword(e.target.value)}
+              onChange={onInputValue}
             />
           </div>
 

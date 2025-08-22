@@ -1,70 +1,55 @@
-import { useEffect, useState } from "react"
-import { Link } from "react-router-dom"
+import { useEffect } from "react"
 import useAuth from "../hooks/useAuth"; //fn hook propio que nos permite acceder a nuestro context de autenticacion AuthContext
 import LoginForm from "../components/LoginForm";
-
+import { ValidationRequestError, ValidationInputError } from "../utils/handlerErrors";
+import { validateInformation } from '../helpers/validation'
+import { handlerTypeError } from "../utils/validateTypeError";
 
 export default function Login() {
-  
+
+  useEffect(() => {
+    authUser()
+  }, [])
+
   //extraer del context
-  const { setAuth, showAlert, navigate, development, clienteAxios } = useAuth();
+  const { setAuth, showAlert, navigate, clienteAxios, authUser, location } = useAuth();
 
   //envio de petiicon para loguin
-  const handleSubmit = async( e, email, password) => {
-    e.preventDefault();//evita envio por default
-    if ([email.trim(), password.trim()].includes('')) { //valida si estan vacios email y password    
-      showAlert({
-        typeAlert: 'error',
-        title: 'Faltan datos',
-        message: 'Debes ingresar Usuario y Contraseña',     
-      })
-      return
-    }
-    
-    try { 
-      showAlert({typeAlert: 'loading'})
-      //enviamos datos para validar loguin
+  const handleSubmit = async (email, password) => {   
+
+    try {
+      validateInformation({ "Correo Electrónico":email, "contraseña": password });//valida datos vacios
+      if (password.length < 6) throw new ValidationInputError('La contresaña es muy corta. Debe ser  mayor a 6 caracteres');
+      showAlert({ typeAlert: 'loading' })
+     
       const { data } = await clienteAxios.post('/users/login', { email, password });
-     
       console.log(data);
-      //almacenamos el LS el token que es JWT que contiene el id del usuario
-      localStorage.setItem('token', data.user.token);
-      //guardamos la informacion data en el context
+      
+      const { statusCode, message, response: userReceived } = data;
+      if (statusCode !== 200) throw new ValidationRequestError(message);
+      // if (statusCode !== 200) throw new Error(message);    
+      localStorage.setItem('token', userReceived.token); //almacenar en LS el token que es JWT que contiene el id del usuario
       const user = {
-        _id: data.user.id,
-        name: data.user.nombre,
-        email: data.user.email
-      }
-      setAuth(user);
-      //navegamos a proyectos
-      showAlert({
-        typeAlert: 'closeAlert',
-        callbackAcept: () => navigate('/files')
-      })
-     
-    } catch (error) {
-      console.log(error);
+        _id: userReceived.id,
+        name: userReceived.nombre,
+        email: userReceived.email,
+        typeUser: userReceived?.typeUser ? userReceived.typeUser : null
+      };
+      setAuth(user);//guardamos user logueado en context
+      showAlert({ typeAlert: 'closeAlert' });
+      navigate(location.state?.from?.pathname || "/events");
 
-      let message = error.response?.data?.message || 'Ocurrio un error intentalo más tarde si el problema persiste contacte a soporte técnico.'
-      showAlert({
-        typeAlert: 'error',
-        title: 'Error al iniciar sesión',
-        message: message,
-      })
-    
+    } catch (error) {   
+      console.log('¡this is error!',error);  
+      console.log('here is the error', error.name);      
+      const infoAlert = handlerTypeError(error);
+      console.log(infoAlert);
+      showAlert(infoAlert)
+      
     }
-
   }
 
   return (
-    
-    <LoginForm 
-    // email={email}
-    // setEmail={setEmail}
-    // password={password}
-    // setPassword={setPassword}
-    handleSubmit={handleSubmit}
-
-    />
+    <LoginForm handleSubmit={handleSubmit} />
   )
 }

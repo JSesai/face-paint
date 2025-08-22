@@ -82,7 +82,7 @@ export default function Mapa({ titleMap }) {
                     const lon = parseFloat(data[0].lon);
                     development && console.log("Coordenadas obtenidas:", { lat, lon });
                     setUbicationConfirmed(true)
-                    showAlert({ typeAlert: 'closeAlert' })
+                    showAlert({ typeAlert: 'closeAlert' });
                     // Actualiza la posición en el mapa
                     setPosition([lat, lon]);
                     if (mapRef.current) {
@@ -216,14 +216,14 @@ export default function Mapa({ titleMap }) {
             <form onSubmit={handleSubmit} className="flex items-center gap-4 mb-2">
                 <input
                     type="text"
-                    className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                    placeholder="Ingresa tu código postal"
+                    className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 w-2/3"
+                    placeholder="Ingresa el código postal a buscar"
                     value={cpInput}
                     onChange={(e) => setCpInput(e.target.value)}
                 />
                 <button
                     type="submit"
-                    className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-md transition duration-200"
+                    className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-md transition duration-200 w-1/3"
                 >
                     Buscar
                 </button>
@@ -251,7 +251,7 @@ export default function Mapa({ titleMap }) {
 
             <div className="flex justify-center items-center mt-3">
                 <button
-                    className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-md transition duration-200 lg:py-2 lg:text-xl"
+                    className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-md transition duration-200 lg:py-2 lg:text-xl lg:w-1/3 w-2/3 "
                     type="button"
                     onClick={handleNext}
                 >

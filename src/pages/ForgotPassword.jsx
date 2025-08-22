@@ -1,37 +1,37 @@
 import { useState } from "react"
 import { Link } from "react-router-dom"
-import clienteAxios from "../config/clienteAxios";
-import Alerta from "../components/Alerta"
+import useAuth from "../hooks/useAuth";
+import useForm from "../hooks/useForm";
+import { currentDate } from "../helpers/dates";
+import { handlerTypeError } from "../utils/validateTypeError";
+import { validateInformation } from '../helpers/validation';
+import { ValidationRequestError } from "../utils/handlerErrors";
+
 
 export default function ForgotPassword() {
-  const [email, setEmail] = useState(""); //estate que almacena el email que el usuario ingresa
+  const { showAlert, navigate, clienteAxios } = useAuth();
+  const { email, onInputValue } = useForm({ email: '' });
+
 
   const handleSubmit = async e => {
-    e.preventDefault(); //prenimos envio por default
-    //validacion de state email y vacio
-    if (email === '' || email.length < 6) {
-      setAlerta({
-        msg: "El Email Es Obligatorio",
-        error: true
-      })
-      return
-    }
     try {
+      e.preventDefault();
+      validateInformation({ "Correo Electrónico": email });
+      showAlert({ typeAlert: 'loading' });
       //hacemos peticion post y extraemos lo que devuelve como respuesta en data
-      const { data } = await clienteAxios.post(`/usuarios/olvide-password`, { email });
-      // setAlerta({
-      //   msg: data.msg,
-      //   error: false
-      // })
+      const { data } = await clienteAxios.post(`/users/forgot-password`, { email, recoveyDate: currentDate() });
+      const { statusCode, message, response } = data;
+      if (statusCode !== 200) throw new ValidationRequestError(message);
+      showAlert({
+        typeAlert: 'success',
+        message: response.message,
+        callbackAcept: () => navigate('/')
+      });
     } catch (error) {
-      //cacha el error y extrae el mensaje que viene del back en response por eso error.respose.data.msg
-      // setAlerta({
-      //   msg: error.response.data.msg,
-      //   error: true
-      // })
-
+      console.log('here is the error', error.name);      
+      handlerTypeError(error);
     }
-  }
+  };
 
 
   return (
@@ -40,9 +40,6 @@ export default function ForgotPassword() {
       <div className="bg-gray-100 min-h-screen flex items-center justify-center">
         <div className="bg-white m-2 p-8 rounded-lg shadow-lg max-w-md w-full">
           <h2 className="text-3xl font-bold text-center text-purple-600 mb-6">Recupera tu cuenta</h2>
-
-
-
           <form onSubmit={handleSubmit}>
 
             <div className="mb-4">
@@ -54,7 +51,7 @@ export default function ForgotPassword() {
                 className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
                 placeholder="Ingresa tu correo electrónico"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={ onInputValue }
               />
             </div>
 
@@ -62,7 +59,7 @@ export default function ForgotPassword() {
               type="submit"
               className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
             >
-              Registrarme
+              Enviar
             </button>
           </form>
 
@@ -72,9 +69,6 @@ export default function ForgotPassword() {
           </div>
         </div>
       </div>
-
-
-
     </>
   )
 }

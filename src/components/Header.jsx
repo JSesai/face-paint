@@ -9,38 +9,21 @@ export default function Header() {
     const { cerrarSesionAuth } = useAuth()
 
     const handleCerrarSesion = () => {
-        cerrarSesionAuth()
-        // cerrarSesionProyectos()
+        cerrarSesionAuth();
     }
 
+
     return (
-        <header className="py-4 px-5 bg-white border-b shadow-sm">
-            <div className="md:flex md:justify-between">
-                <h2 className="text-4xl text-sky-600 font-black text-center mb-5 md:mb-0">MAJO</h2>
+
+        <header className="py-3 px-4 md:p-4 bg-white border-b shadow-sm sm:ml-64">
+            <div className="">
+                <h2 className="text-3xl text-sky-600 font-black text-center mb-1 md:mb-0">COLOREARTE</h2>
 
                 <div className="flex flex-col md:flex-row items-center gap-4">
-
-                    <button
-                        type="button"
-                        className="font-bold uppercase"
-                    // onClick={handleBuscador}
-                    >Buscar Eventos</button>
-                    <Link to="/proyectos" className="font-bold uppercase">
-                        Archivos
-                    </Link>
-
-                    <button
-                        onClick={handleCerrarSesion} 
-                        type="button"
-                        className="text-white text-sm bg-sky-600 p-3 rounded-md uppercase font-bold">
-                        Cerrar Sesión
-                    </button>
-
-                    {/* <Busqueda /> */}
-
                 </div>
 
             </div>
+
         </header>
     )
 }

@@ -9,17 +9,26 @@ export default function Navbar() {
     };
 
     return (
-        <nav className="bg-purple-600 text-white shadow-md">
+        <nav className="bg-gradient-to-r from-violet-200 to-violet-500 text-black shadow-md">
             <div className="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
-                <div className="text-2xl font-semibold">
-                    <Link to="/">Pintacaritas</Link>
+                {/* <div className="text-2xl font-semibold">
+                    <Link to="/">ColoreArte</Link>
+                </div> */}
+                <div className="flex items-center space-x-2">
+                    <img
+                        src="./logo-colorearte.jpeg"
+                        alt="logo colorearte"
+                        className="h-14 w-auto mix-blend-multiply"
+                    />
+                    {/* <span className="text-xl font-semibold">Colorearte</span> */}
                 </div>
 
                 {/* Menú principal */}
                 <div className="hidden md:flex space-x-6">
                     <Link to="/" className="hover:bg-purple-700 px-3 py-2 rounded-md">Inicio</Link>
                     <Link to="/package" className="hover:bg-purple-700 px-3 py-2 rounded-md">Paquetes</Link>
-                    <Link to="/about" className="hover:bg-purple-700 px-3 py-2 rounded-md">Sobre Nosotros</Link>
+                    <Link to="/galeria" className="hover:bg-purple-700 px-3 py-2 rounded-md">Galeria</Link>
+                    <Link to="/about" className="hover:bg-purple-700 px-3 py-2 rounded-md">Nosotros</Link>
                     <Link to="/login" className="hover:bg-purple-700 px-3 py-2 rounded-md">Iniciar sesión</Link>
                 </div>
 
@@ -49,14 +58,7 @@ export default function Navbar() {
 
             {/* Menú móvil */}
             {isMobileMenuOpen && (
-                <div className="md:hidden bg-purple-600 text-white py-4 px-6">
-                    <Link
-                        to="/"
-                        className="block py-2 px-4 rounded-md hover:bg-purple-700"
-                        onClick={toggleMobileMenu}
-                    >
-                        Inicio
-                    </Link>
+                <div className="md:hidden bg-purple-500 text-white py-4 px-6">
                     <Link
                         to="/package"
                         className="block py-2 px-4 rounded-md hover:bg-purple-700"
@@ -65,11 +67,25 @@ export default function Navbar() {
                         Paquetes
                     </Link>
                     <Link
+                        to="/galeria"
+                        className="block py-2 px-4 rounded-md hover:bg-purple-700"
+                        onClick={toggleMobileMenu}
+                    >
+                        Galeria
+                    </Link>
+                    <Link
+                        to="/promociones"
+                        className="block py-2 px-4 rounded-md hover:bg-purple-700"
+                        onClick={toggleMobileMenu}
+                    >
+                        Promociones
+                    </Link>
+                    <Link
                         to="/about"
                         className="block py-2 px-4 rounded-md hover:bg-purple-700"
                         onClick={toggleMobileMenu}
                     >
-                        Sobre Nosotros
+                        Nosotros
                     </Link>
                     <Link
                         to="/login"

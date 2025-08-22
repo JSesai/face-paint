@@ -4,28 +4,26 @@ import useAuth from "../hooks/useAuth"; //hook propio para extraer informacion d
 import { Header, SideBar } from "../index"
 
 
+export default function ProtectedRoute() {
 
-export default function RutaProtegida() {
-
-    const { auth, cargando } = useAuth() //Extrae lo que esta en el return en el context , el objeto tiene una propiedad llamada auth 
-   
-    // if (cargando) return 'cargando..'
+    const { auth, location } = useAuth();
+     
     return (
         <>
-            {/* validamos por id la propiedad extraida si existe esta autenticado de lo contrario lo direccionamos al login  */}
+            {/* si existe id esta autenticado de lo contrario lo direccionamos al login  */}
             {auth?._id ?
                 (
                     <div className="bg-gray-100">
                         <Header />
                         <div className="md:flex md:min-h-screen">
                             <SideBar />
-                            <main className="p-4 flex-1">
+                            <main className="w-full sm:ml-64">
                                 <Outlet />
                             </main>
                         </div>
                     </div>
-                ) : <Navigate to="/" />}
-
+                ) :
+                <Navigate to="/login" state={{ from: location }} replace />}
         </>
     )
 }

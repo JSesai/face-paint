@@ -1,10 +1,10 @@
 //ARCHIVO QUE CONTIENE EL CONTEXTO GLOBAL CON INFORMACION PARA PODER HACERLA ACCESIBLE EN TODA LA APP
 import { useState, useEffect, createContext } from "react";
-import AlertMessage from "../components/Alerta"
+import showAlert from "../components/showAlert"
 import clienteAxios, { dataFacePaint } from "../config/clienteAxios";
 import { useNavigate, useParams, useLocation } from "react-router-dom"
 import { formatToCurrency } from "../helpers/formatCurrency"
-import {paramValuesFacePaint} from "../data/paramMajo";
+
 
 const AuthContext = createContext(); //creamos el contexto 
 
@@ -17,11 +17,21 @@ const AuthProvider = ({ children }) => {
     const [auth, setAuth] = useState({});
     const [cargando, setCargando] = useState(false);
     const [ubicationConfirmed, setUbicationConfirmed] = useState(false);
-    const [showEventLocation, setShowEventLocation] = useState(true)
-    const [packagesFacePaint, setPackagesFacePaint] = useState([])
-    const [selectedPackage, setSelectedPackage] = useState({})
-    const [infoContact, setInfoContact] = useState({})
+    const [showEventLocation, setShowEventLocation] = useState(true);
+    const [packagesFacePaint, setPackagesFacePaint] = useState([]);
+    const [selectedPackage, setSelectedPackage] = useState({});
+    const [infoContact, setInfoContact] = useState({});
     const [position, setPosition] = useState([19.432608, -99.133209]); // Coordenadas iniciales (CDMX)
+    const [eventInformation, setEventInformation] = useState({
+        name: '',
+        eventType: '',
+        contactNumber: '',
+        eventDate: '',
+        eventTime: ''
+    });
+    const [eventSelected, setEventSelected] = useState({});
+    const [allEvents, setAllEvents] = useState([]);
+
     const navigate = useNavigate();
     const params = useParams();
     const location = useLocation();
@@ -30,7 +40,15 @@ const AuthProvider = ({ children }) => {
         setCargando(true)
         getDataInicial()
 
-    }, [])
+    }, []);
+
+
+    const onChangeFormEventInformation = (event) => {
+
+        let { name, value } = event.target;
+        setEventInformation((prevState) => ({ ...prevState, [name]: value }));
+    }
+
 
     //obtener parametro
     const getParam = async () => {
@@ -43,8 +61,7 @@ const AuthProvider = ({ children }) => {
             // return parametro
         } catch (error) {
             console.log(console.error);
-            throw error
-
+            throw error;
         }
     }
 
@@ -54,7 +71,7 @@ const AuthProvider = ({ children }) => {
             return JSON.parse(string)
 
         } catch (error) {
-            development && console.log('No es un JSON valido retornara el string sin parsear', error);
+            // development && console.log('No es un JSON valido retornara el string sin parsear', error);
             return string
         }
     }
@@ -62,19 +79,19 @@ const AuthProvider = ({ children }) => {
 
     //obtener informacion inicial
     const getDataInicial = async () => {
-        const { paramFacePaint } = await getParam()
+        const { response: paramFacePaint } = await getParam();
         if (!paramFacePaint) {
             development && console.log('error al obtener params', paramFacePaint);
-            return
-        }
+            return;
+        };
 
-        let getValuesParam = {}
+        let getValuesParam = {};
         for (const paramItem in paramFacePaint) {
             getValuesParam[paramItem] = convertStringToJson(paramFacePaint[paramItem])
         }
 
-        
-       
+
+
         setParamValuesFacePaint(getValuesParam)
         getDataManager(getValuesParam)
         setCargando(false)
@@ -96,12 +113,10 @@ const AuthProvider = ({ children }) => {
 
     //fn que autentica al usuario
     const authUser = async () => {
+
         //extraemos el token de LS
-        const token = tokenExists()
-        if (!token) {
-            setCargando(false);
-            return;
-        }
+        const token = tokenExists();
+        if (!token) return setCargando(false);
 
         //cabeceras para el envio de la peticion (objeto con la config)
         const config = {
@@ -111,27 +126,32 @@ const AuthProvider = ({ children }) => {
 
             }
         }
-
         //si hay token se intenta autenticar al usuario con JWT
         try {
             //extraemos la respuesta de nuestar peticion lo hacemos con await para que se detenga la ejecucion hasta obtener la respuesta de lo contrario sigue ejecutando y data se llena con valor de undefind
-            const { data: { user: userReceived } } = await clienteAxios('users/profile', config);
+            const { data } = await clienteAxios('/users/profile', config);
+            development && console.log('data', data);
+
+            const { statusCode, message, response: userReceived } = data;
+            if (statusCode !== 200) throw new Error(message);
+
             const user = {
                 _id: userReceived.id,
                 name: userReceived.nombre,
                 email: userReceived.email,
-                rolUser: userReceived?.rolUser ? userReceived.rolUser : null
+                typeUser: userReceived?.typeUser ? userReceived.typeUser : null
             }
-            development && console.log('user', user);
-            setAuth(user);
-            navigate('/dashboard')
+            development && console.log('user loged', user);
+            setAuth(user); //guardar obj de user
+            navigate(location.state?.from?.pathname || "/events");
 
         } catch (error) {
-            console.log(error);
-            setAuth({});
-            localStorage.clear()
+            console.log(error.name);
+            setAuth({});                                    
+            localStorage.clear();
+
         } finally {
-            setCargando(false);
+            // setCargando(false); 
         }
 
     }
@@ -143,7 +163,7 @@ const AuthProvider = ({ children }) => {
         //si no existe el token lo regresamos al login
         if (!token) {
             development && console.log("No existe token");
-            return navigate("./")
+            return undefined
         }
 
         return token
@@ -151,15 +171,15 @@ const AuthProvider = ({ children }) => {
 
     //fn para cerrar la sesion de la autenticacion
     const cerrarSesionAuth = () => {
-        //seteamos los estates a vacios para 
-        localStorage.clear()
-        setAuth({})
-    }
+        development && console.log('cerrando sesion');
 
-    //muestra alerta en base al objeto recibido
-    const showAlert = (infoAlert) => {
-        AlertMessage(infoAlert)
-    };
+        //seteamos los estates a vacios para 
+        localStorage.clear();
+        setAuth({})
+        navigate('/', { replace: true });
+        development && console.log(location);
+
+    }
 
     //obtener paquetes promocionales
     const getPackagesFacePaint = async (selectedLocation) => {
@@ -170,9 +190,8 @@ const AuthProvider = ({ children }) => {
                 development && console.log('retorna el primer elemento de paquetes', paramValuesFacePaint.packagesFacePaint[0]?.packages);
                 return paramValuesFacePaint.packagesFacePaint[0]?.packages || []
             }
-
         }
-       
+
         if (paramValuesFacePaint && paramValuesFacePaint.packagesFacePaint && Object.keys(paramValuesFacePaint.packagesFacePaint).length > 0 && paramValuesFacePaint.packagesFacePaint.length > 0) {
             const findPackageByLocation = paramValuesFacePaint.packagesFacePaint.find(pkg => pkg.priceLocation.toUpperCase() === selectedLocation.toUpperCase())
             if (!findPackageByLocation) {
@@ -187,7 +206,7 @@ const AuthProvider = ({ children }) => {
                     btnAccept: 'Seleccionar Ubicación',
                     callbackAcept: () => {
                         setShowEventLocation(true)
-                        navigate('package/cotizacionpersonalizada')
+                        navigate('reservationMaps')
                         setSelectedPackage({})
                         setPackagesFacePaint([])
                     },
@@ -232,9 +251,22 @@ const AuthProvider = ({ children }) => {
     const resetValuesReservation = () => {
         setUbicationConfirmed(false);
         setSelectedPackage({});
-        setShowEventLocation(true)
-        navigate('/about');
+        setShowEventLocation(true);
+        setInfoContact({
+            name: '',
+            eventType: '',
+            contactNumber: '',
+            eventDate: '',
+            eventTime: ''
+        });
     };
+
+
+    const handleEventSelected = (eventSelec) => {
+        console.log('seleccionaste el evento', eventSelec);        
+        setEventSelected(eventSelec);
+        navigate(`/events/manage-events/event-detail`);
+    }
 
 
 
@@ -243,8 +275,9 @@ const AuthProvider = ({ children }) => {
         <AuthContext.Provider
             value={{ //prop que devuelve informacion  en un objeto que es la que esta disponible para los componentes
                 clienteAxios,
-                setAuth,
+                authUser,
                 auth,
+                setAuth,
                 cargando,
                 setCargando,
                 cerrarSesionAuth,
@@ -269,8 +302,13 @@ const AuthProvider = ({ children }) => {
                 setUbicationConfirmed,
                 showEventLocation,
                 setShowEventLocation,
-                resetValuesReservation
-
+                resetValuesReservation,
+                eventInformation,
+                onChangeFormEventInformation,
+                handleEventSelected,
+                eventSelected,
+                allEvents, 
+                setAllEvents
             }}
         >
             {children}

@@ -1,5 +1,5 @@
 export { default as App } from './App';
-export { default as Alerta } from './components/Alerta';
+export { default as Alerta } from './components/showAlert';
 export { default as Busqueda } from './components/Busqueda';
 export { default as Header } from './components/Header';
 export { default as SideBar } from './components/SideBar';
@@ -10,7 +10,7 @@ export * from './helpers/FormatearFecha';
 export { default as useAuth } from './hooks/useAuth';
 export * from './index';
 export { default as AuthLayout } from './layouts/AuthLayout';
-export { default as RutaProtegida } from './layouts/RutaProtegida';
+export { default as RutaProtegida } from './layouts/ProtectedRoute';
 export * from './main';
 export { default as ConfirmAccount } from './pages/ConfirmAccount';
 export { default as ForgotPassword } from './pages/ForgotPassword';

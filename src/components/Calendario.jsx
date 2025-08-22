@@ -19,7 +19,7 @@ export default function Calendario({ setHora, setFecha }) {
             name="eventDate"
             required
             className="w-full border border-gray-300 rounded-lg p-2 text-gray-700 shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            onChange={(e) => setFecha(e.target.value)}
+            onChange={ setFecha }
           />
         </div>
 
@@ -36,7 +36,7 @@ export default function Calendario({ setHora, setFecha }) {
             name="eventTime"
             required
             className="w-full border border-gray-300 rounded-lg p-2 text-gray-700 shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            onChange={(e) => setHora(e.target.value)}
+            onChange={ setHora }
           />
         </div>
       </div>
