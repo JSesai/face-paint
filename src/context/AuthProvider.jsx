@@ -11,7 +11,7 @@ const AuthContext = createContext(); //creamos el contexto
 //creamos el provider con la fn AuthProvider que rode a la App por eso recibe children
 const AuthProvider = ({ children }) => {
     // informacion que sera disponible
-    const [development] = useState(true);
+    const [development] = useState(process.env.NODE_ENV === "development");
 
     const [paramValuesFacePaint, setParamValuesFacePaint] = useState({})
     const [auth, setAuth] = useState({});

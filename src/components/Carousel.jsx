@@ -24,8 +24,7 @@ const Carousel = () => {
 
     // Cambio automático de imágenes cada 3 segundos
     useEffect(() => {
-        console.log(imagenes);
-
+     
         if (imagenes) {
             const interval = setInterval(() => {
                 setCurrentIndex((prevIndex) => (prevIndex + 1) % imagenes.length);
