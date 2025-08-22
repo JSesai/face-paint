@@ -1,32 +1,48 @@
 import React, { useState, useEffect } from "react";
-import useAuth from "../hooks/useAuth";
+
+const imagenes = [
+    { name: 'image1', url: 'majo-infantil-FP-01.jpeg' },
+    { name: 'image1', url: 'majo-infantil-FP-02.jpeg' },
+    { name: 'image1', url: 'majo-infantil-FP-03.jpeg' },
+    { name: 'image1', url: 'majo-infantil-FP-04.jpeg' },
+    { name: 'image1', url: 'majo-infantil-FP-05.jpeg' },
+    { name: 'image1', url: 'majo-infantil-FP-06.jpeg' },
+    { name: 'image1', url: 'majo-infantil-FP-07.jpeg' },
+    { name: 'image1', url: 'majo-infantil-FP-08.jpeg' },
+    { name: 'image1', url: 'majo-infantil-FP-09.jpeg' },
+    { name: 'image1', url: 'majo-infantil-FP-10.jpeg' },
+    { name: 'image1', url: 'majo-infantil-FP-11.jpg' },
+    { name: 'image1', url: 'majo-infantil-FP-12.jpg' },
+    { name: 'image1', url: 'majo-infantil-FP-13.jpg' },
+    { name: 'image1', url: 'majo-infantil-FP-14.jpg' },
+    { name: 'image1', url: 'majo-infantil-FP-15.jpg' },
+]
 
 const Carousel = () => {
 
-    //extraer del context
-    const { paramValuesFacePaint } = useAuth();
     const [currentIndex, setCurrentIndex] = useState(0);
 
     // Cambio automático de imágenes cada 3 segundos
     useEffect(() => {
+        console.log(imagenes);
 
-        if (paramValuesFacePaint && paramValuesFacePaint?.imagesFacePaint) {
+        if (imagenes) {
             const interval = setInterval(() => {
-                setCurrentIndex((prevIndex) => (prevIndex + 1) % paramValuesFacePaint.imagesFacePaint.length);
+                setCurrentIndex((prevIndex) => (prevIndex + 1) % imagenes.length);
             }, 4000); // Cambia cada 3 segundos
 
             return () => clearInterval(interval); // Limpiar el intervalo cuando se desmonte el componente
         }
 
-    }, [paramValuesFacePaint?.imagesFacePaint?.length]);
+    }, [imagenes.length]);
 
     const nextSlide = () => {
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % paramValuesFacePaint.imagesFacePaint.length);
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % imagenes.length);
     };
 
     const prevSlide = () => {
         setCurrentIndex(
-            (prevIndex) => (prevIndex - 1 + paramValuesFacePaint.imagesFacePaint.length) % paramValuesFacePaint.imagesFacePaint.length
+            (prevIndex) => (prevIndex - 1 + imagenes.length) % imagenes.length
         );
     };
 
@@ -39,7 +55,7 @@ const Carousel = () => {
                         transform: `translateX(-${currentIndex * 100}%)`,
                     }}
                 >
-                    {paramValuesFacePaint?.imagesFacePaint?.map((img, index) => (
+                    {imagenes.map((img, index) => (
                         <div key={index} className="flex-shrink-0 w-full">
                             <img
                                 src={img.url}
@@ -54,7 +70,7 @@ const Carousel = () => {
             </div>
 
             {
-                paramValuesFacePaint?.imagesFacePaint?.length > 0 &&
+               imagenes.length > 0 &&
                 (
                     <>
                         <button

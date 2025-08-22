@@ -3,6 +3,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Carousel from "../components/Carousel";
 import Footer from "../components/Footer";
+import Flyer from "../components/Flyer";
 
 
 export default function Home() {
@@ -23,10 +24,14 @@ export default function Home() {
                                 Hagamos de cada ocasión algo único.
                             </p>
                             <Carousel />
+                            <Flyer src={'/flyer-3.png'} textAlt={'Paquete basico'} />
+                            <Flyer src={'/flyer-2.png'} textAlt={'Paquete doble'} />
+                            <Flyer src={'/flyer-1.png'} textAlt={'Paquete belly'} />
                         </>
                     )}
                     <Outlet />
 
+                  
 
 
                 </section>

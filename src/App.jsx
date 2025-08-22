@@ -34,26 +34,26 @@ function App() {
     <BrowserRouter>
       <Suspense fallback={<Spinner />} >
 
-        <AuthProvider> {/*AuthProvider es el context, rodea a las rutas para que tengan acceso a la informacion del contexto global */}
-          {/* <ProyectosProvider> ProyectosProvider da acceso al context, rodea a las rutas para que tengan acceso a la informacion del contexto global */}
+        <AuthProvider>
+
 
           <Routes>
             {/* rutas de area publica */}
-            <Route path="/" element={<Home />}> {/* Ruta padre contiene a mas rutas que en este caso son publicas e hijas  y */}
-              <Route path="about" element={<About />} />
+            <Route path="/" element={<Home />}> 
+              {/* <Route path="about" element={<About />} />
               <Route path="package" element={<ServicePackages />} />
               <Route path="package/:id" element={<PackageDetails />} />
               <Route path="reservationMaps" element={<ReservationMaps />} />
               <Route path="terms-conditions" element={<TermsAndConditions />} />
               <Route path="make-payment-reservation" element={<MakePayment />} />
-              <Route path="login" element={<Login />} /> {/* Ruta principal */}
-              <Route path="registrar" element={<RegisterUser />} /> {/* Ruta para registrar usuario */}
-              <Route path="olvide-password" element={<ForgotPassword />} /> {/* Ruta para cuando olviden su password */}
-              <Route path="olvide-password/:token" element={<NewPassword />} /> {/* Ruta dinamica para poder leer el token y definir nueva contraseña */}
-              <Route path="confirm-account/:id" element={<ConfirmAccount />} /> {/* Ruta dinamica para poder leer el id y confirmar cuenta */}
+              <Route path="login" element={<Login />} />
+              <Route path="registrar" element={<RegisterUser />} />
+              <Route path="olvide-password" element={<ForgotPassword />} />
+              <Route path="olvide-password/:token" element={<NewPassword />} />
+              <Route path="confirm-account/:id" element={<ConfirmAccount />} /> */}
             </Route>
 
-            {/* rutas de area protegida envulta por la ruta padre con el componente RutaProtegida que envuelve las rutas hijas*/}
+            {/* rutas protegidas */}
             <Route path="/events" element={<ArtistsProvider> <ProtectedRoute />   </ArtistsProvider>}>
               <Route index element={<MainHub />} />
               <Route path="config-resources" element={<ConfigResources />} />
@@ -63,8 +63,7 @@ function App() {
               <Route path="confirmar-reservacion/:id" element={<ConfirmReservation />} />
               <Route path="enviar-cotizacion" element={<Cotizacion />} />
               <Route path="enviar-cotizacion/:id" element={<Cotizacion />} />
-              {/* <Route path=":id" element={<Proyecto />} />
-              <Route path="editar/:id" element={<EditarProyecto />} /> */}
+
 
             </Route>
 
