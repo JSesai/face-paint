@@ -1,10 +1,12 @@
 import { FaFacebook, FaInstagram, FaWhatsapp } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 
 export default function Footer() {
+    const { redirectToWhatsApp } = useAuth();
     return (
         <footer className="bg-gradient-to-b from-violet-300 via-pink-400 to-purple-500 text-white py-6 mt-16">
-        {/* // <footer className="bg-gradient-to-b from-gray-400 via-gray-600 to-gray-800 text-white py-6 mt-16"> */}
+            {/* // <footer className="bg-gradient-to-b from-gray-400 via-gray-600 to-gray-800 text-white py-6 mt-16"> */}
             <div className="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
 
                 {/* Logo y descripción */}
@@ -37,7 +39,7 @@ export default function Footer() {
                         <Link to="https://instagram.com" target="_blank" className="hover:scale-110 transition">
                             <FaInstagram className="text-2xl hover:text-pink-500 transition-transform hover:scale-110" />
                         </Link>
-                        <Link to="https://wa.me/5215555555555" target="_blank" className="hover:scale-110 transition">
+                        <Link to="#" onClick={() => redirectToWhatsApp("Hola, requiero información sobre el servicio de pintacaritas.")} target="_blank" className="hover:scale-110 transition">
                             <FaWhatsapp className="text-2xl hover:text-green-500 transition-transform hover:scale-110" />
 
                         </Link>
